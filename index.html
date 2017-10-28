@@ -2,16 +2,38 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <title>Data Summary</title>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-    <title>Visualization Project</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/datalib@1.8.0/datalib.min.js"></script>
+    <style>
+    </style>
   </head>
   <body>
-    <div id="visualization">
-      <svg></svg>
-    </div>
-    <script src="./dist/bundle.js"></script>
+    <script>
+      
+      // Use these for other formats:
+      // d3.tsv('data.tsv', data => {
+      // d3.json('data.json', data => {
+      
+      // Load and summarize the data.
+      d3.csv('diabetes2015.csv', data => {
+        
+        // Assemble a summary string.
+        const summary = [
+          'Data table summary: ',
+          data.length + ' rows',
+          data.columns.length + ' columns',
+          Math.round(d3.csvFormat(data).length / 1024) + ' kB',
+          '\nSummary of each column:',
+          dl.format.summary(data)
+        ].join('\n');
+        
+        // Show the summary string on the page.
+        d3.select('body').append('pre').text(summary);
+        
+        // Log the summary to the console.
+        console.log(summary);
+      });
+    </script>
   </body>
 </html>
