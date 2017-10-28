@@ -1,4 +1,4 @@
-d3.csv('diabetes2015.csv', data => {
+d3.csv('data/diabetes2015.csv', data => {
         
    // Assemble a summary string.
    const summary = [
