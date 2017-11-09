@@ -1,33 +1,10 @@
-A template project that uses Webpack and D3. Designed as a starting point for interactive data visualization projects that require JavaScript code to be organized across many files (as ES6 modules).
+This is a project for CS 573 Data Visualization at Worcester Polytechnic Institute in the Fall of 2017. It was created using blockbuilder and the block is [here](https://bl.ocks.org/seschultz/raw/8d2aec940d564a990661632cc2459f38/5a467cf9a62fe1b08b54641357472e5884b1afe3/)
 
-The starter code here is from [Stylized Scatter Plot with Color Legend](https://bl.ocks.org/curran/ecb09f2605c7fbbadf0eeb75da5f0a6b).
+The data is about insured people in Allegheny County, PA who have been diagnosed with diabetes and comes from the Allegheny County / City of Pittsburgh / Western PA Regional Data Center published on [data.gov](https://catalog.data.gov/dataset/diabetes).
 
-## Development
 
-This project uses NPM and Webpack. To get started, clone the repository and install dependencies like this:
+The page shows a map of Allegheny county as a cholorpleth map, coloring each census tract by the proportion of insured people in that census tract who have been diagnosed with diabetes. The darker the green the higher the number of diagnosed/enrolled.
 
-```
-cd dataviz-project-template
-npm install
-```
+When hovering over the map, the text shows the number of the census tract currently selected and the proportion of people diagnosed with diabetes.
 
-You'll need to build the JavaScript bundle using WebPack, using this command:
-
-```
-npm run build
-```
-
-To see the page run, you'll need to serve the site using a local HTTP server.
-
-```
-npm install -g http-server
-http-server
-```
-
-Now the site should be available at localhost:8080.
-
-For automatic refreshing during development, you can start the Webpack Dev Server like this:
-
-```
-npm run serve
-```
+Clicking on a census tract brings up a bar chart showing the number of people diagnosed in that tract vs number of people enrolled.
