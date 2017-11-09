@@ -73,7 +73,7 @@ var lowColor = '#f9f9f9'
     //barChart(d)
   }
     
-  d3.csv("diabetes2015_tractNums.csv", type, function(data){
+  d3.csv("data/diabetes2015_tractNums.csv", type, function(data){
     const minVal=0;
     const maxVal=0.2;
         
@@ -91,7 +91,7 @@ var lowColor = '#f9f9f9'
         .attr("transform", "translate(352, 60)")
         .call(colorLegend);*/
     
-    d3.json("Allegheny_County_Census_Tracts_2016.geojson", function(json){
+    d3.json("data/Allegheny_County_Census_Tracts_2016.geojson", function(json){
       
       // Loop through each census tract value in the .csv file
     	for (var i = 0; i < data.length; i++) {
