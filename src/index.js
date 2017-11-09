@@ -1,5 +1,13 @@
-  	var lowColor = '#f9f9f9'
-  	var highColor = '#209222'
+var lowColor = '#f9f9f9'
+	var highColor = '#209222'
+  
+  var bigText = d3.select("body").append('text')
+  .classed('big-text', true);
+  
+  var barSVG = d3.select("body").append('svg')
+  	.attr("width", 200)
+  	.attr("height",200)
+  	.attr("transform", `translate(0, -100)`);
 
 	var projection = d3
 		.geoMercator() 
@@ -12,7 +20,9 @@
 	var map = d3.select("body")
 		.append("svg")
 		.attr("width", 960)
-		.attr("height", 500); 
+		.attr("height", 500);
+    //.attr('transform', `translate(0, 0)`);
+  
 	
 	function type(d){
         d.TotalEnrollment=+d.TotalEnrollment;
@@ -20,37 +30,88 @@
         return d;
   }
     
-  //d3.json("Allegheny_County_Census_Tracts_2016.geojson", drawMaps);
-	
-  //TRACTCE in json corresponds to CensusTract number in csv
   
-  var tracts=[];
+  function barChart(tract){
+
+    barSVG.selectAll('rect').remove()
+    barSVG.selectAll('text').remove()
+    
+    diagRect=barSVG.append('rect')
+        .attr('class', 'bar')
+        .attr('height', +tract.properties.diag/50)
+        .attr('width', 50)
+        .attr('fill', 'red')
+      	.attr('transform', `translate(70, 0)`);
+    
+    diagLabel=barSVG.append('text')
+    		.attr('class','label')
+    		.attr('x',65)
+    		.attr('y', 150)
+    		.text("Diagnosed");
+       
+    enRect=barSVG.append('rect')
+    		.attr('class', 'bar')
+    		.attr('height', +tract.properties.en/50)
+    		.attr('width', 50)
+    		.attr('fill', 'blue')
+    		.attr('transform', `translate(140, 0)`);   
+    
+     diagLabel=barSVG.append('text')
+    		.attr('class','label')
+    		.attr('x',140)
+    		.attr('y', 150)
+    		.text("Enrolled");
+    
+  }
   
-  d3.csv("data/diabetes2015_tractNums.csv", type, function(data){
+  function hover(d){
+    if(d.properties.value==undefined){
+      valueString='no data'
+    }
+    else valueString=d.properties.value
+    bigText.text('Census Tract ' + d.properties.TRACTCE +', Proportion Diagnosed: ' + valueString);
+    //barChart(d)
+  }
+    
+  d3.csv("diabetes2015_tractNums.csv", type, function(data){
     const minVal=0;
     const maxVal=0.2;
-    
+        
     var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor]);
     
-    d3.json("data/Allegheny_County_Census_Tracts_2016.geojson", function(json){
+    /*var colorLegend = d3.legend.color()
+        .labelFormat(d3.format(".0f"))
+        .scale(ramp)
+        .shapePadding(5)
+        .shapeWidth(50)
+        .shapeHeight(20)
+        .labelOffset(12);
+
+      svg.append("g")
+        .attr("transform", "translate(352, 60)")
+        .call(colorLegend);*/
+    
+    d3.json("Allegheny_County_Census_Tracts_2016.geojson", function(json){
       
       // Loop through each census tract value in the .csv file
     	for (var i = 0; i < data.length; i++) {
-
+        
       	// Grab census tract id
-      	var dataState = data[i].CensusTract;
-
+      	var dataTract = data[i].CensusTract;
+        
       	// Grab proportion diagnosed of those enrolled 
-      	var dataValue = data[i].TotalDiagnosed/data[i].TotalEnrolled;
+      	var proportionDiag = data[i].TotalDiagnosed/data[i].TotalEnrolled;
         
         // Find the corresponding state inside the GeoJSON
       for (var j = 0; j < json.features.length; j++) {
-        var jsonState = json.features[j].properties.TRACTCE;
+        var jsonTract = json.features[j].properties.TRACTCE;
 
-        if (dataState == jsonState) {
+        if (dataTract == jsonTract) {
 
-          // Copy the data value into the JSON
-          json.features[j].properties.value = dataValue;
+          // Copy the data values into the JSON
+          json.features[j].properties.en = data[i].TotalEnrolled;
+          json.features[j].properties.diag = data[i].TotalDiagnosed;
+          json.features[j].properties.value = proportionDiag;
 
           // Stop looking through the JSON
           break;
@@ -62,9 +123,12 @@
 			.enter()
 			.append("path")
 			.attr("d", path)  
-			.attr("stroke", "#222")
-      .attr("fill", function(d) { return ramp(d.properties.value) });
-
+			.attr("stroke", "#828282")
+      .attr("fill", function(d) { return ramp(d.properties.value) })
+      //.attr("legend", true)
+      .on("mouseover", function(d){hover(d)})
+      .on("click", function(d){barChart(d)});
+			
     })
     
-    })
+   })
